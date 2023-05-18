@@ -8,9 +8,16 @@ export default function App() {
   const [selectedCity, setSelectedCity] = useState('')
   const [selectedPostalCode, setSelectedPostalCode] = useState('')
   const [postalCodes, setPostalCodes] = useState([])
+  const [stateError, setStateError] = useState(false)
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
+
+  useEffect(() => {
+    if (selectedState) {
+      setStateError(false)
+    }
+  }, [selectedState])
 
   // useEffect(() => {
   //   console.log('states: >>>>>>>>>>', states)
@@ -33,6 +40,12 @@ export default function App() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+
+    if (!selectedState) {
+      setStateError(true)
+      return
+    }
+
     console.log({
       selectedState,
       selectedCity,
@@ -47,12 +60,19 @@ export default function App() {
         <form className={styles.form} onSubmit={handleSubmit}>
           <label>
             <span className={styles.label}>
-              Select State
+              {stateError ? (
+                <span className={styles.error}>
+                  Please select a state
+                </span>
+              ) : (
+                'Select State'
+              )}
             </span>
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
               className={styles.field}
+              style={{ outline: stateError ? '1px solid #EA0029' : 'none' }}
             >
               <option value=''>
                 Select State

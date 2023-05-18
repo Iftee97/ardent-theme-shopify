@@ -3,8 +3,7 @@
   background: #F2F2F2;
   border-radius: 10px;
   padding: 40px;
-  margin: 0 auto;
-  margin-top: 24px;
+  margin: 40px auto;
 }
 
 .formContainer {
@@ -44,6 +43,12 @@
 .field:focus {
   outline: none;
   border: 1px solid #464646;
+}
+
+.error {
+  display: inline-block;
+  color: #EA0029;
+  font-weight: 600;
 }
 
 .submitBtn {
