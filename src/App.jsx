@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from './App.module.css'
-import { Country, State, City } from 'country-state-city'
+import { State, City } from 'country-state-city'
 import zipcodes from 'zipcodes'
 
 export default function App() {
@@ -59,20 +59,20 @@ export default function App() {
       <div className={styles.formContainer}>
         <form className={styles.form} onSubmit={handleSubmit}>
           <label>
-            <span className={styles.label}>
-              {stateError ? (
-                <span className={styles.error}>
-                  Please select a state
-                </span>
-              ) : (
-                'Select State'
-              )}
-            </span>
+            {stateError ? (
+              <span className={styles.error}>
+                Please select a state
+              </span>
+            ) : (
+              <span className={styles.label}>
+                Select State
+              </span>
+            )}
             <select
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
               className={styles.field}
-              style={{ outline: stateError ? '1px solid #EA0029' : 'none' }}
+              style={{ outline: stateError && '3px solid #EA0029' }}
             >
               <option value=''>
                 Select State
@@ -132,7 +132,7 @@ export default function App() {
       </div>
 
       {/* table */}
-    </div>
+    </div >
   )
 }
 

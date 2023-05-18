@@ -21,7 +21,15 @@
 }
 
 .label {
-  color: #FFF;
+  color: #fff;
+}
+
+.error {
+  color: #EA0029;
+}
+
+.label,
+.error {
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -43,12 +51,6 @@
 .field:focus {
   outline: none;
   border: 1px solid #464646;
-}
-
-.error {
-  display: inline-block;
-  color: #EA0029;
-  font-weight: 600;
 }
 
 .submitBtn {
