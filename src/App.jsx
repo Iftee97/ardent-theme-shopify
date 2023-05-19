@@ -302,7 +302,7 @@ export default function App() {
                         </a>
                       </div>
                       <div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
                           <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
                             City/Town {' '}
                           </span>
@@ -310,7 +310,7 @@ export default function App() {
                             {data.city}
                           </span>
                         </div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
                           <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
                             Address {' '}
                           </span>
@@ -318,7 +318,7 @@ export default function App() {
                             {data.address}
                           </span>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
                           <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
                             Phone {' '}
                           </span>
