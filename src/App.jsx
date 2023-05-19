@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+// import { useNavigate } from 'react-router-dom'
 import styles from './App.module.css'
 import { State, City } from 'country-state-city'
 import zipcodes from 'zipcodes'
@@ -9,42 +10,14 @@ export default function App() {
   const [selectedPostalCode, setSelectedPostalCode] = useState('')
   const [postalCodes, setPostalCodes] = useState([])
   const [stateError, setStateError] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // const navigate = useNavigate()
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
 
-  const smapleTableData = [
-    {
-      "_id": "6466137e7253b9f0b45bad81",
-      "company": "Doofenshmirtz Evil inc.",
-      "firstName": "Robert",
-      "lastName": "Chuy",
-      "address1": "10707 Robincreek Lane",
-      "address2": "unknown",
-      "state": "Texas",
-      "city": "Frisco",
-      "zipcode": "75035",
-      "phone": "(972)795-0636",
-      "email": "rob@gulfatl.net",
-      "territory": "area 51",
-      "__v": 0
-    },
-    {
-      "_id": "64662b22cf5e7efd8553987e",
-      "company": "Gulf Atlantic Marketing, Inc.",
-      "firstName": "Robert",
-      "lastName": "Chuy",
-      "address1": "10707 Robincreek Lane",
-      "address2": "",
-      "state": "Texas",
-      "city": "Frisco",
-      "zipcode": "75035",
-      "phone": "(972)795-0636",
-      "email": "rob@gulfatl.net",
-      "territory": "",
-      "__v": 0
-    }
-  ]
+  const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
 
   const tableData = [
     {
@@ -92,23 +65,88 @@ export default function App() {
       address: '419 N. Old Newport Blvd. Newport, CA 92663',
       phone: '949-642-6662'
     },
+    {
+      id: 5,
+      title: 'Southtown Sporting Goods 123456789',
+      imgPath: '../assets/southtown-sporting-goods.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Chino',
+      address: '12615 Colony Street Chino, CA 91710',
+      phone: '909-590-7425'
+    },
+    {
+      id: 6,
+      title: 'Anglers World 123456789',
+      imgPath: '../assets/anglers-world.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'El Sobrante',
+      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
+      phone: '510-243-1300'
+    },
+    {
+      id: 7,
+      title: 'Fisherman’s Warehouse 123456789',
+      imgPath: '../assets/fishermans-warehouse.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Huntington Beach',
+      address: '16942 D Gothard St. Huntington Beach, CA 92647',
+      phone: '714-841-6878'
+    },
+    {
+      id: 8,
+      title: 'Anglers Arsenal 123456789',
+      imgPath: '../assets/anglers-arsenal.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'La Mesa',
+      address: '8183 Center Street, La Mesa, CA 91942',
+      phone: '619-466-8355'
+    },
+    {
+      id: 9,
+      title: 'Anglers Center 123456789',
+      imgPath: '../assets/anglers-center.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Newport',
+      address: '419 N. Old Newport Blvd. Newport, CA 92663',
+      phone: '949-642-6662'
+    },
   ]
 
-  const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
+  function handlePreviousPage() {
+    if (currentPage > 1) {
+      const newPage = currentPage - 1
+      setCurrentPage(newPage)
+      updateURL(newPage)
+    }
+  }
+
+  function handleNextPage() {
+    const totalPages = Math.ceil(tableData.length / 5)
+    if (currentPage < totalPages) {
+      const newPage = currentPage + 1
+      setCurrentPage(newPage)
+      updateURL(newPage)
+    }
+  }
+
+  function updateURL(page) {
+    // navigate(`?page=${page}`)
+    const newURL = window.location.pathname + `?page=${page}`;
+    window.history.pushState({ path: newURL }, '', newURL);
+  }
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const pageParam = urlParams.get('page')
+    const initialPage = pageParam ? parseInt(pageParam) : 1
+    setCurrentPage(initialPage)
+  }, [])
 
   useEffect(() => {
     if (selectedState) {
       setStateError(false)
     }
   }, [selectedState])
-
-  // useEffect(() => {
-  //   console.log('states: >>>>>>>>>>', states)
-  //   console.log('cities: >>>>>>>>>>', cities)
-  //   console.log('selectedState: >>>>>>>>>>', selectedState)
-  //   console.log('selectedCity: >>>>>>>>>>', selectedCity)
-  //   console.log('selectedPostalCode: >>>>>>>>>>', selectedPostalCode)
-  // }, [states, cities, selectedState, selectedCity, selectedPostalCode])
 
   function getPostalCodes(city, state) {
     const locations = zipcodes.lookupByName(city, state)
@@ -134,6 +172,21 @@ export default function App() {
       selectedCity,
       selectedPostalCode
     })
+  }
+
+  function Pagination() {
+    return (
+      <div className={styles.paginationContainer}>
+        <button className={styles.paginationBtn} onClick={() => handlePreviousPage()}>
+          <ArrowLeft />
+          <span>Previous</span>
+        </button>
+        <button className={styles.paginationBtn} onClick={() => handleNextPage()}>
+          <span>Next</span>
+          <ArrowRight />
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -233,7 +286,8 @@ export default function App() {
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {tableData.map((data, index) => (
+                {/* {tableData.map((data, index) => ( */}
+                {tableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
                   <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
                       <div className={styles.tableBodyDealer}>
@@ -271,6 +325,7 @@ export default function App() {
                   </tr>
                 ))}
               </tbody>
+              <Pagination totalPages={Math.ceil(tableData.length / 5)} />
             </table>
           </div>
           <div className={styles.mobileTableContainer}>
@@ -281,7 +336,7 @@ export default function App() {
                 </div>
               </div>
               <div className={styles.tableBody}>
-                {tableData.map((data, index) => (
+                {tableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
                   <div
                     key={data.id || index}
                     className={styles.mobileTableRow}
@@ -337,6 +392,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
+              <Pagination totalPages={Math.ceil(tableData.length / 5)} />
             </div>
           </div>
         </>
@@ -354,6 +410,22 @@ function SearchIcon() {
   return (
     <svg className={styles.searchIcon} viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M16.5 16.5L12.875 12.875M14.8333 8.16667C14.8333 11.8486 11.8486 14.8333 8.16667 14.8333C4.48477 14.8333 1.5 11.8486 1.5 8.16667C1.5 4.48477 4.48477 1.5 8.16667 1.5C11.8486 1.5 14.8333 4.48477 14.8333 8.16667Z" stroke="#666666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function ArrowLeft() {
+  return (
+    <svg className={styles.arrow} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15.8327 9.99996H4.16602M4.16602 9.99996L9.99935 15.8333M4.16602 9.99996L9.99935 4.16663" stroke="#344054" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function ArrowRight() {
+  return (
+    <svg className={styles.arrow} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4.16602 9.99996H15.8327M15.8327 9.99996L9.99935 4.16663M15.8327 9.99996L9.99935 15.8333" stroke="#344054" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }

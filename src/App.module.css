@@ -88,7 +88,7 @@
   padding: 20px 24px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
   border: 1px solid #E4E7EC;
   border-bottom: none;
 }
@@ -177,6 +177,30 @@
 .dealerImage {
   width: 48px !important;
   height: 48px !important;
+}
+
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24px 18px 0 18px;
+}
+
+.paginationBtn {
+  padding: 8px 14px;
+  background-color: #fff;
+  border: 1px solid #D0D5DD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.arrow {
+  width: 20px;
+  height: 20px;
 }
 
 @media (max-width: 768px) {
