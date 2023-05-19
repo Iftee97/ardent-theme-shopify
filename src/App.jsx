@@ -218,6 +218,10 @@ export default function App() {
       {tableData?.length > 0 && (
         <>
           <div className={styles.tableContainer}>
+            <div className={styles.tableHeadTop}>
+              <p>Search Result</p>
+              <span>100 Dealers</span>
+            </div>
             <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
               <thead className={styles.tableHead}>
                 <tr>

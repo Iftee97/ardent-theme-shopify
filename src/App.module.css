@@ -83,6 +83,31 @@
   display: block;
 }
 
+.tableHeadTop {
+  background-color: #fff;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #E4E7EC;
+  border-bottom: none;
+}
+
+.tableHeadTop>p {
+  color: #666;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.tableHeadTop>span {
+  display: inline-block;
+  color: #DF421E;
+  background-color: #FCECE9;
+  border-radius: 16px;
+  padding: 2px 8px;
+}
+
 .table {
   background: #FFF;
   border: 1px solid #E4E7EC;
