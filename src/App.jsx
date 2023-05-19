@@ -13,6 +13,89 @@ export default function App() {
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
 
+  const smapleTableData = [
+    {
+      "_id": "6466137e7253b9f0b45bad81",
+      "company": "Doofenshmirtz Evil inc.",
+      "firstName": "Robert",
+      "lastName": "Chuy",
+      "address1": "10707 Robincreek Lane",
+      "address2": "unknown",
+      "state": "Texas",
+      "city": "Frisco",
+      "zipcode": "75035",
+      "phone": "(972)795-0636",
+      "email": "rob@gulfatl.net",
+      "territory": "area 51",
+      "__v": 0
+    },
+    {
+      "_id": "64662b22cf5e7efd8553987e",
+      "company": "Gulf Atlantic Marketing, Inc.",
+      "firstName": "Robert",
+      "lastName": "Chuy",
+      "address1": "10707 Robincreek Lane",
+      "address2": "",
+      "state": "Texas",
+      "city": "Frisco",
+      "zipcode": "75035",
+      "phone": "(972)795-0636",
+      "email": "rob@gulfatl.net",
+      "territory": "",
+      "__v": 0
+    }
+  ]
+
+  const tableData = [
+    {
+      id: 0,
+      title: 'Southtown Sporting Goods',
+      imgPath: '../assets/southtown-sporting-goods.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Chino',
+      address: '12615 Colony Street Chino, CA 91710',
+      phone: '909-590-7425'
+    },
+    {
+      id: 1,
+      title: 'Anglers World',
+      imgPath: '../assets/anglers-world.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'El Sobrante',
+      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
+      phone: '510-243-1300'
+    },
+    {
+      id: 2,
+      title: 'Fisherman’s Warehouse',
+      imgPath: '../assets/fishermans-warehouse.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Huntington Beach',
+      address: '16942 D Gothard St. Huntington Beach, CA 92647',
+      phone: '714-841-6878'
+    },
+    {
+      id: 3,
+      title: 'Anglers Arsenal',
+      imgPath: '../assets/anglers-arsenal.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'La Mesa',
+      address: '8183 Center Street, La Mesa, CA 91942',
+      phone: '619-466-8355'
+    },
+    {
+      id: 4,
+      title: 'Anglers Center',
+      imgPath: '../assets/anglers-center.png',
+      googleMapsUrl: 'https://www.google.com',
+      city: 'Newport',
+      address: '419 N. Old Newport Blvd. Newport, CA 92663',
+      phone: '949-642-6662'
+    },
+  ]
+
+  const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
+
   useEffect(() => {
     if (selectedState) {
       setStateError(false)
@@ -132,6 +215,133 @@ export default function App() {
       </div>
 
       {/* table */}
+      {tableData?.length > 0 && (
+        <>
+          <div className={styles.tableContainer}>
+            <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
+              <thead className={styles.tableHead}>
+                <tr>
+                  {tableHeadCols.map((data, index) => (
+                    <th key={index} className={styles.tableHeadItem}>
+                      {data}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className={styles.tableBody}>
+                {tableData.map((data, index) => (
+                  <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
+                    <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
+                      <div className={styles.tableBodyDealer}>
+                        <img
+                          src={data.imgPath}
+                          alt={data.imgPath.split('/')[2]}
+                          className={styles.dealerImage}
+                        />
+                        <div>
+                          <p className={styles.dealerTitle}>
+                            {data.title}
+                          </p>
+                          <a
+                            href={data.googleMapsUrl}
+                            target='_blank'
+                            className={styles.dealerMapUrl}
+                          >
+                            Google Map
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
+                      {data.city}
+                    </td>
+                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
+                      {data.address.split(',')[0]} <br />
+                      {data.address.split(',')[1]}
+                    </td>
+                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
+                      <a href={`tel:${data.phone}`}>
+                        {data.phone}
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={styles.mobileTableContainer}>
+            <div className={styles.mobileTable}>
+              <div className={styles.tableHead}>
+                <div className={styles.tableHeadItem}>
+                  Dealer Name
+                </div>
+              </div>
+              <div className={styles.tableBody}>
+                {tableData.map((data, index) => (
+                  <div
+                    key={data.id || index}
+                    className={styles.mobileTableRow}
+                    style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
+                  >
+                    <img
+                      src={data.imgPath}
+                      alt={data.imgPath.split('/')[2]}
+                      className={styles.dealerImage}
+                    />
+                    <div className={styles.dealerData}>
+                      <div style={{ marginBottom: '8px' }}>
+                        <h5 className={styles.dealerTitle}>
+                          {data.title}
+                        </h5>
+                        <a
+                          href={data.googleMapsUrl}
+                          target='_blank'
+                          className={styles.dealerMapUrl}
+                        >
+                          Google Map
+                        </a>
+                      </div>
+                      <div>
+                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                            City/Town {' '}
+                          </span>
+                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                            {data.city}
+                          </span>
+                        </div>
+                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                            Address {' '}
+                          </span>
+                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                            {data.address}
+                          </span>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '4px' }}>
+                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                            Phone {' '}
+                          </span>
+                          <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
+                            <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                              {data.phone}
+                            </a>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+      {tableData?.length === 0 && (
+        <div className={styles.noData}>
+          No data found
+        </div>
+      )}
     </div >
   )
 }

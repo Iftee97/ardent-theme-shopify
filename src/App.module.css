@@ -10,7 +10,7 @@
   background-color: #DF421E;
   padding: 20px 32px 35px 32px;
   border-radius: 4px;
-  /* margin-bottom: 40px; */
+  margin-bottom: 40px;
 }
 
 .form {
@@ -79,6 +79,81 @@
   margin-top: -2px;
 }
 
+.tableContainer {
+  display: block;
+}
+
+.table {
+  background: #FFF;
+  border: 1px solid #E4E7EC;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.tableHeadItem {
+  padding: 12px 24px;
+  text-align: start;
+  color: #151901;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.tableBodyItem {
+  padding: 16px 24px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #666;
+}
+
+.tableBodyItem>a {
+  color: #DF421E;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tableBodyDealer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dealerTitle {
+  color: #151901;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+
+.dealerMapUrl {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #DF421E;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mobileTableContainer {
+  display: none;
+}
+
+.noData {
+  color: #464646;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 27px;
+  text-align: start;
+  margin-top: 24px;
+}
+
+.dealerImage {
+  width: 48px !important;
+  height: 48px !important;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 16px;
@@ -91,5 +166,40 @@
 
   .formContainer {
     padding: 20px;
+  }
+
+  .table {
+    display: none;
+  }
+
+  .mobileTableContainer {
+    display: block;
+  }
+
+  .mobileTable {
+    background: #FFF;
+    border: 1px solid #E4E7EC;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  .mobileTableRow {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    padding: 12px 20px;
+  }
+
+  .tableHeadItem {
+    padding: 12px 20px;
+  }
+
+  .dealerTitle {
+    margin-bottom: 2px;
+  }
+
+  .dealerImage {
+    width: 72px !important;
+    height: 72px !important;
   }
 }
