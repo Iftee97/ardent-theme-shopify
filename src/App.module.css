@@ -180,10 +180,9 @@
 }
 
 .paginationContainer {
-  /* width: 100%; */
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin: 24px 18px;
 }
 
@@ -256,6 +255,10 @@
   .dealerImage {
     width: 72px !important;
     height: 72px !important;
+  }
+
+  .paginationContainer {
+    margin: 24px 0;
   }
 
   .paginationBtn>span {

@@ -12,7 +12,6 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
-  // const [btnDisabled, setBtnDisabled] = useState(false)
   const [hasPrevious, setHasPrevious] = useState(false)
   const [hasNext, setHasNext] = useState(false)
 
@@ -20,99 +19,6 @@ export default function App() {
   const cities = City.getCitiesOfState('US', selectedState)
 
   const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
-
-  const tableData = [
-    {
-      id: 0,
-      title: 'Southtown Sporting Goods',
-      imgPath: '../assets/southtown-sporting-goods.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Chino',
-      address: '12615 Colony Street Chino, CA 91710',
-      phone: '909-590-7425'
-    },
-    {
-      id: 1,
-      title: 'Anglers World',
-      imgPath: '../assets/anglers-world.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'El Sobrante',
-      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
-      phone: '510-243-1300'
-    },
-    {
-      id: 2,
-      title: 'Fisherman’s Warehouse',
-      imgPath: '../assets/fishermans-warehouse.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Huntington Beach',
-      address: '16942 D Gothard St. Huntington Beach, CA 92647',
-      phone: '714-841-6878'
-    },
-    {
-      id: 3,
-      title: 'Anglers Arsenal',
-      imgPath: '../assets/anglers-arsenal.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'La Mesa',
-      address: '8183 Center Street, La Mesa, CA 91942',
-      phone: '619-466-8355'
-    },
-    {
-      id: 4,
-      title: 'Anglers Center',
-      imgPath: '../assets/anglers-center.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Newport',
-      address: '419 N. Old Newport Blvd. Newport, CA 92663',
-      phone: '949-642-6662'
-    },
-    {
-      id: 5,
-      title: 'Southtown Sporting Goods 123456789',
-      imgPath: '../assets/southtown-sporting-goods.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Chino',
-      address: '12615 Colony Street Chino, CA 91710',
-      phone: '909-590-7425'
-    },
-    {
-      id: 6,
-      title: 'Anglers World 123456789',
-      imgPath: '../assets/anglers-world.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'El Sobrante',
-      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
-      phone: '510-243-1300'
-    },
-    {
-      id: 7,
-      title: 'Fisherman’s Warehouse 123456789',
-      imgPath: '../assets/fishermans-warehouse.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Huntington Beach',
-      address: '16942 D Gothard St. Huntington Beach, CA 92647',
-      phone: '714-841-6878'
-    },
-    {
-      id: 8,
-      title: 'Anglers Arsenal 123456789',
-      imgPath: '../assets/anglers-arsenal.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'La Mesa',
-      address: '8183 Center Street, La Mesa, CA 91942',
-      phone: '619-466-8355'
-    },
-    {
-      id: 9,
-      title: 'Anglers Center 123456789',
-      imgPath: '../assets/anglers-center.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Newport',
-      address: '419 N. Old Newport Blvd. Newport, CA 92663',
-      phone: '949-642-6662'
-    },
-  ]
 
   useEffect(() => {
     let pageQuery = new URLSearchParams(location.search)
