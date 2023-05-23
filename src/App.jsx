@@ -10,7 +10,11 @@ export default function App() {
   const [postalCodes, setPostalCodes] = useState([])
   const [stateError, setStateError] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
+  // const [btnDisabled, setBtnDisabled] = useState(false)
+  const [hasPrevious, setHasPrevious] = useState(false)
+  const [hasNext, setHasNext] = useState(false)
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
@@ -111,45 +115,47 @@ export default function App() {
   ]
 
   useEffect(() => {
-    getDealerData()
-  }, [])
+    let pageQuery = new URLSearchParams(location.search)
+    let pageNumber = pageQuery.get("page")
+    if (!pageNumber) pageNumber = 1
+    getDealerData(pageNumber)
+    console.log("pageNumber: >>>>>>>>>", pageNumber)
+  }, [location.search])
 
-  async function getDealerData() {
-    // let number = pageNumber || 1;
-    const response = await fetch(`http://localhost:4000/proxy_route/dealer`)
+  async function getDealerData(pageNumber) {
+    let number = pageNumber || 1
+    const response = await fetch(`http://localhost:4000/proxy_route/dealer?page=${number}`)
     const data = await response.json()
     console.log('fetched dealer data: >>>>>>>>>>', data)
-    setNewTableData(data.dealers)
+    setNewTableData(data.data)
+    setCurrentPage(data.currentPage)
+    setTotalPages(data.numberOfPages)
   }
 
   function handlePreviousPage() {
     if (currentPage > 1) {
-      const newPage = currentPage - 1
-      setCurrentPage(newPage)
-      updateURL(newPage)
+      let value = +currentPage - 1
+      setPage(value)
+    } else {
+      return
     }
   }
 
   function handleNextPage() {
-    const totalPages = Math.ceil(tableData.length / 5)
     if (currentPage < totalPages) {
-      const newPage = currentPage + 1
-      setCurrentPage(newPage)
-      updateURL(newPage)
+      let value = +currentPage + 1
+      setPage(value)
+    } else {
+      return
     }
   }
 
-  function updateURL(page) {
-    const newURL = window.location.pathname + `?page=${page}`;
-    window.history.pushState({ path: newURL }, '', newURL);
+  function setPage(pageNumber) {
+    setCurrentPage(pageNumber)
+    const newURL = window.location.pathname + `?page=${pageNumber}`
+    window.history.pushState({ path: newURL }, '', newURL)
+    getDealerData(pageNumber)
   }
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const pageParam = urlParams.get('page')
-    const initialPage = pageParam ? parseInt(pageParam) : 1
-    setCurrentPage(initialPage)
-  }, [])
 
   useEffect(() => {
     if (selectedState) {
@@ -193,7 +199,7 @@ export default function App() {
           <span>Next</span>
           <ArrowRight />
         </button>
-      </div>
+      </div >
     )
   }
 
@@ -294,7 +300,7 @@ export default function App() {
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
+                {newTableData.map((data, index) => (
                   <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
                       <div className={styles.tableBodyDealer}>
@@ -342,7 +348,7 @@ export default function App() {
                 </div>
               </div>
               <div className={styles.tableBody}>
-                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
+                {newTableData.map((data, index) => (
                   <div
                     key={data.id || index}
                     className={styles.mobileTableRow}
