@@ -115,10 +115,11 @@ export default function App() {
   }, [])
 
   async function getDealerData() {
-    const response = await fetch('http://localhost:4000/proxy_route/dealer')
+    // let number = pageNumber || 1;
+    const response = await fetch(`http://localhost:4000/proxy_route/dealer`)
     const data = await response.json()
     console.log('fetched dealer data: >>>>>>>>>>', data)
-    setNewTableData(data.data)
+    setNewTableData(data.dealers)
   }
 
   function handlePreviousPage() {
@@ -163,7 +164,6 @@ export default function App() {
 
   useEffect(() => {
     const postCodes = getPostalCodes(selectedCity, selectedState)
-    // console.log('postCodes: >>>>>>>>>>', postCodes)
     setPostalCodes(postCodes)
   }, [selectedCity, selectedState])
 
