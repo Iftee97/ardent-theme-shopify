@@ -12,8 +12,6 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
-  const [hasPrevious, setHasPrevious] = useState(false)
-  const [hasNext, setHasNext] = useState(false)
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
