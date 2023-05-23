@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-// import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import { State, City } from 'country-state-city'
 import zipcodes from 'zipcodes'
@@ -11,8 +10,7 @@ export default function App() {
   const [postalCodes, setPostalCodes] = useState([])
   const [stateError, setStateError] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-
-  // const navigate = useNavigate()
+  const [newTableData, setNewTableData] = useState([])
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
@@ -112,6 +110,17 @@ export default function App() {
     },
   ]
 
+  useEffect(() => {
+    getDealerData()
+  }, [])
+
+  async function getDealerData() {
+    const response = await fetch('http://localhost:4000/proxy_route/dealer')
+    const data = await response.json()
+    console.log('fetched dealer data: >>>>>>>>>>', data)
+    setNewTableData(data.data)
+  }
+
   function handlePreviousPage() {
     if (currentPage > 1) {
       const newPage = currentPage - 1
@@ -130,7 +139,6 @@ export default function App() {
   }
 
   function updateURL(page) {
-    // navigate(`?page=${page}`)
     const newURL = window.location.pathname + `?page=${page}`;
     window.history.pushState({ path: newURL }, '', newURL);
   }
@@ -268,7 +276,7 @@ export default function App() {
       </div>
 
       {/* table */}
-      {tableData?.length > 0 && (
+      {newTableData?.length > 0 && (
         <>
           <div className={styles.tableContainer}>
             <div className={styles.tableHeadTop}>
@@ -286,22 +294,21 @@ export default function App() {
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {/* {tableData.map((data, index) => ( */}
-                {tableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
+                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
                   <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
                       <div className={styles.tableBodyDealer}>
                         <img
-                          src={data.imgPath}
-                          alt={data.imgPath.split('/')[2]}
+                          src={data.file}
+                          alt={data.name}
                           className={styles.dealerImage}
                         />
                         <div>
                           <p className={styles.dealerTitle}>
-                            {data.title}
+                            {data.name}
                           </p>
                           <a
-                            href={data.googleMapsUrl}
+                            href={data.googleMapUrl}
                             target='_blank'
                             className={styles.dealerMapUrl}
                           >
@@ -314,8 +321,7 @@ export default function App() {
                       {data.city}
                     </td>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      {data.address.split(',')[0]} <br />
-                      {data.address.split(',')[1]}
+                      {data.address}
                     </td>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
                       <a href={`tel:${data.phone}`}>
@@ -325,7 +331,7 @@ export default function App() {
                   </tr>
                 ))}
               </tbody>
-              <Pagination totalPages={Math.ceil(tableData.length / 5)} />
+              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
             </table>
           </div>
           <div className={styles.mobileTableContainer}>
@@ -336,24 +342,24 @@ export default function App() {
                 </div>
               </div>
               <div className={styles.tableBody}>
-                {tableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
+                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
                   <div
                     key={data.id || index}
                     className={styles.mobileTableRow}
                     style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
                   >
                     <img
-                      src={data.imgPath}
-                      alt={data.imgPath.split('/')[2]}
+                      src={data.file}
+                      alt={data.name}
                       className={styles.dealerImage}
                     />
                     <div className={styles.dealerData}>
                       <div style={{ marginBottom: '8px' }}>
                         <h5 className={styles.dealerTitle}>
-                          {data.title}
+                          {data.name}
                         </h5>
                         <a
-                          href={data.googleMapsUrl}
+                          href={data.googleMapUrl}
                           target='_blank'
                           className={styles.dealerMapUrl}
                         >
@@ -392,12 +398,12 @@ export default function App() {
                   </div>
                 ))}
               </div>
-              <Pagination totalPages={Math.ceil(tableData.length / 5)} />
+              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
             </div>
           </div>
         </>
       )}
-      {tableData?.length === 0 && (
+      {newTableData?.length === 0 && (
         <div className={styles.noData}>
           No data found
         </div>
