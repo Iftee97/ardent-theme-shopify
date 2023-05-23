@@ -97,12 +97,24 @@ export default function App() {
   function Pagination() {
     return (
       <div className={styles.paginationContainer}>
-        <button className={styles.paginationBtn} onClick={() => handlePreviousPage()}>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => handlePreviousPage()}
+          disabled={currentPage === 1 ? true : false}
+        >
           <ArrowLeft />
-          <span>Previous</span>
+          <span>
+            Previous
+          </span>
         </button>
-        <button className={styles.paginationBtn} onClick={() => handleNextPage()}>
-          <span>Next</span>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => handleNextPage()}
+          disabled={currentPage === totalPages ? true : false}
+        >
+          <span>
+            Next
+          </span>
           <ArrowRight />
         </button>
       </div >

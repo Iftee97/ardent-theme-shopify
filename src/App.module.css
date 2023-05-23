@@ -182,7 +182,7 @@
 .paginationContainer {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin: 24px 18px;
 }
 
