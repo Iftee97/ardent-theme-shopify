@@ -12,6 +12,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
@@ -28,12 +29,14 @@ export default function App() {
 
   async function getDealerData(pageNumber) {
     let number = pageNumber || 1
+    setLoading(true)
     const response = await fetch(`http://localhost:4000/proxy_route/dealer?page=${number}`)
     const data = await response.json()
     console.log('fetched dealer data: >>>>>>>>>>', data)
     setNewTableData(data.data)
     setCurrentPage(data.currentPage)
     setTotalPages(data.numberOfPages)
+    setLoading(false)
   }
 
   function handlePreviousPage() {
@@ -85,11 +88,32 @@ export default function App() {
       return
     }
 
-    console.log({
-      selectedState,
-      selectedCity,
-      selectedPostalCode
-    })
+    try {
+      setLoading(true)
+      const response = await fetch('http://localhost:4000/proxy_route/dealer-by-state-city-zipcode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          state: selectedState,
+          city: selectedCity,
+          zipcode: selectedPostalCode
+        })
+      })
+      console.log('response: >>>>>>>>>>', response)
+      if (response.ok) {
+        const data = await response.json()
+        console.log('data: >>>>>>>>>>', data)
+        setNewTableData(data.data)
+        setCurrentPage(data.currentPage)
+        setTotalPages(data.numberOfPages)
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log('error: >>>>>>>>>>', error)
+      setLoading(false)
+    }
   }
 
   function Pagination() {
@@ -203,7 +227,9 @@ export default function App() {
           <div className={styles.tableContainer}>
             <div className={styles.tableHeadTop}>
               <p>Search Result</p>
-              <span>100 Dealers</span>
+              <span>
+                {loading ? 'loading...' : `Showing ${newTableData.length} results`}
+              </span>
             </div>
             <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
               <thead className={styles.tableHead}>
@@ -216,7 +242,7 @@ export default function App() {
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {newTableData.map((data, index) => (
+                {!loading && newTableData.map((data, index) => (
                   <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
                     <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
                       <div className={styles.tableBodyDealer}>
@@ -252,6 +278,11 @@ export default function App() {
                     </td>
                   </tr>
                 ))}
+                {loading && (
+                  <p>
+                    Loading...
+                  </p>
+                )}
               </tbody>
               <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
             </table>
