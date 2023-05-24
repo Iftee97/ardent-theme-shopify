@@ -9,153 +9,81 @@ export default function App() {
   const [selectedPostalCode, setSelectedPostalCode] = useState('')
   const [postalCodes, setPostalCodes] = useState([])
   const [stateError, setStateError] = useState(false)
+  const [cityError, setCityError] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
 
   const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
 
-  const tableData = [
-    {
-      id: 0,
-      title: 'Southtown Sporting Goods',
-      imgPath: '../assets/southtown-sporting-goods.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Chino',
-      address: '12615 Colony Street Chino, CA 91710',
-      phone: '909-590-7425'
-    },
-    {
-      id: 1,
-      title: 'Anglers World',
-      imgPath: '../assets/anglers-world.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'El Sobrante',
-      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
-      phone: '510-243-1300'
-    },
-    {
-      id: 2,
-      title: 'Fisherman’s Warehouse',
-      imgPath: '../assets/fishermans-warehouse.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Huntington Beach',
-      address: '16942 D Gothard St. Huntington Beach, CA 92647',
-      phone: '714-841-6878'
-    },
-    {
-      id: 3,
-      title: 'Anglers Arsenal',
-      imgPath: '../assets/anglers-arsenal.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'La Mesa',
-      address: '8183 Center Street, La Mesa, CA 91942',
-      phone: '619-466-8355'
-    },
-    {
-      id: 4,
-      title: 'Anglers Center',
-      imgPath: '../assets/anglers-center.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Newport',
-      address: '419 N. Old Newport Blvd. Newport, CA 92663',
-      phone: '949-642-6662'
-    },
-    {
-      id: 5,
-      title: 'Southtown Sporting Goods 123456789',
-      imgPath: '../assets/southtown-sporting-goods.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Chino',
-      address: '12615 Colony Street Chino, CA 91710',
-      phone: '909-590-7425'
-    },
-    {
-      id: 6,
-      title: 'Anglers World 123456789',
-      imgPath: '../assets/anglers-world.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'El Sobrante',
-      address: '3823 San Pablo Dam Road El Sobrante, CA 94803',
-      phone: '510-243-1300'
-    },
-    {
-      id: 7,
-      title: 'Fisherman’s Warehouse 123456789',
-      imgPath: '../assets/fishermans-warehouse.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Huntington Beach',
-      address: '16942 D Gothard St. Huntington Beach, CA 92647',
-      phone: '714-841-6878'
-    },
-    {
-      id: 8,
-      title: 'Anglers Arsenal 123456789',
-      imgPath: '../assets/anglers-arsenal.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'La Mesa',
-      address: '8183 Center Street, La Mesa, CA 91942',
-      phone: '619-466-8355'
-    },
-    {
-      id: 9,
-      title: 'Anglers Center 123456789',
-      imgPath: '../assets/anglers-center.png',
-      googleMapsUrl: 'https://www.google.com',
-      city: 'Newport',
-      address: '419 N. Old Newport Blvd. Newport, CA 92663',
-      phone: '949-642-6662'
-    },
-  ]
-
   useEffect(() => {
-    getDealerData()
-  }, [])
+    let pageQuery = new URLSearchParams(location.search)
+    let pageNumber = pageQuery.get("page")
+    if (!pageNumber) pageNumber = 1
+    getDealerData(pageNumber)
+    console.log("pageNumber: >>>>>>>>>", pageNumber)
+  }, [location.search])
 
-  async function getDealerData() {
-    // let number = pageNumber || 1;
-    const response = await fetch(`http://localhost:4000/proxy_route/dealer`)
-    const data = await response.json()
-    console.log('fetched dealer data: >>>>>>>>>>', data)
-    setNewTableData(data.dealers)
+  async function getDealerData(pageNumber) {
+    let number = pageNumber || 1
+    try {
+      setLoading(true)
+      const response = await fetch(`http://localhost:4000/proxy_route/dealer?page=${number}`)
+      const data = await response.json()
+      console.log('fetched dealer data: >>>>>>>>>>', data)
+      if (data.data?.length > 0) {
+        setNewTableData(data.data)
+        setCurrentPage(data.currentPage)
+        setTotalPages(data.numberOfPages)
+      } else {
+        setErrorMessage('No data found')
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log('error: >>>>>>>>>>', error)
+      setErrorMessage('Something went wrong')
+      setLoading(false)
+    }
   }
 
   function handlePreviousPage() {
     if (currentPage > 1) {
-      const newPage = currentPage - 1
-      setCurrentPage(newPage)
-      updateURL(newPage)
+      let value = +currentPage - 1
+      setPage(value)
+    } else {
+      return
     }
   }
 
   function handleNextPage() {
-    const totalPages = Math.ceil(tableData.length / 5)
     if (currentPage < totalPages) {
-      const newPage = currentPage + 1
-      setCurrentPage(newPage)
-      updateURL(newPage)
+      let value = +currentPage + 1
+      setPage(value)
+    } else {
+      return
     }
   }
 
-  function updateURL(page) {
-    const newURL = window.location.pathname + `?page=${page}`;
-    window.history.pushState({ path: newURL }, '', newURL);
+  function setPage(pageNumber) {
+    setCurrentPage(pageNumber)
+    const newURL = window.location.pathname + `?page=${pageNumber}`
+    window.history.pushState({ path: newURL }, '', newURL)
+    getDealerData(pageNumber)
   }
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const pageParam = urlParams.get('page')
-    const initialPage = pageParam ? parseInt(pageParam) : 1
-    setCurrentPage(initialPage)
-  }, [])
 
   useEffect(() => {
     if (selectedState) {
       setStateError(false)
     }
-  }, [selectedState])
+    if (selectedCity) {
+      setCityError(false)
+    }
+  }, [selectedState, selectedCity])
 
   function getPostalCodes(city, state) {
     const locations = zipcodes.lookupByName(city, state)
@@ -174,26 +102,67 @@ export default function App() {
       setStateError(true)
       return
     }
+    if (!selectedCity) {
+      setCityError(true)
+      return
+    }
 
-    console.log({
-      selectedState,
-      selectedCity,
-      selectedPostalCode
-    })
+    try {
+      setLoading(true)
+      const response = await fetch('http://localhost:4000/proxy_route/dealer-by-state-city-zipcode', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          state: selectedState,
+          city: selectedCity,
+          zipcode: selectedPostalCode
+        })
+      })
+      console.log('response: >>>>>>>>>>', response)
+      if (response.ok) {
+        const data = await response.json()
+        console.log('data: >>>>>>>>>>', data)
+        if (data.data?.length > 0) {
+          setNewTableData(data.data)
+          setCurrentPage(data.currentPage)
+          setTotalPages(data.numberOfPages)
+        } else {
+          setErrorMessage('No data found')
+        }
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log('error: >>>>>>>>>>', error)
+      setErrorMessage('Something went wrong')
+      setLoading(false)
+    }
   }
 
   function Pagination() {
     return (
       <div className={styles.paginationContainer}>
-        <button className={styles.paginationBtn} onClick={() => handlePreviousPage()}>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => handlePreviousPage()}
+          disabled={currentPage === 1 ? true : false}
+        >
           <ArrowLeft />
           <span>Previous</span>
         </button>
-        <button className={styles.paginationBtn} onClick={() => handleNextPage()}>
+        <span className={styles.paginationPageNum}>
+          {currentPage} of {totalPages}
+        </span>
+        <button
+          className={styles.paginationBtn}
+          onClick={() => handleNextPage()}
+          disabled={currentPage === totalPages ? true : false}
+        >
           <span>Next</span>
           <ArrowRight />
         </button>
-      </div>
+      </div >
     )
   }
 
@@ -209,7 +178,7 @@ export default function App() {
               </span>
             ) : (
               <span className={styles.label}>
-                Select State
+                Select State*
               </span>
             )}
             <select
@@ -229,9 +198,15 @@ export default function App() {
             </select>
           </label>
           <label>
-            <span className={styles.label}>
-              Select City (optional)
-            </span>
+            {cityError ? (
+              <span className={styles.error}>
+                Please select a city
+              </span>
+            ) : (
+              <span className={styles.label}>
+                Select City*
+              </span>
+            )}
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
@@ -249,9 +224,16 @@ export default function App() {
           </label>
           <label>
             <span className={styles.label}>
-              Select Postal Code (optional)
+              Postal Code (optional)
             </span>
-            <select
+            <input
+              type="text"
+              value={selectedPostalCode}
+              onChange={(e) => setSelectedPostalCode(e.target.value)}
+              className={styles.field}
+              placeholder='enter postal code'
+            />
+            {/* <select
               value={selectedPostalCode}
               onChange={(e) => setSelectedPostalCode(e.target.value)}
               className={styles.field}
@@ -264,7 +246,7 @@ export default function App() {
                   {postalCode}
                 </option>
               ))}
-            </select>
+            </select> */}
           </label>
           <button type='submit' className={styles.submitBtn}>
             <SearchIcon />
@@ -276,138 +258,149 @@ export default function App() {
       </div>
 
       {/* table */}
-      {newTableData?.length > 0 && (
-        <>
-          <div className={styles.tableContainer}>
-            <div className={styles.tableHeadTop}>
-              <p>Search Result</p>
-              <span>100 Dealers</span>
-            </div>
-            <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
-              <thead className={styles.tableHead}>
-                <tr>
-                  {tableHeadCols.map((data, index) => (
-                    <th key={index} className={styles.tableHeadItem}>
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className={styles.tableBody}>
-                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
-                  <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
-                      <div className={styles.tableBodyDealer}>
-                        <img
-                          src={data.file}
-                          alt={data.name}
-                          className={styles.dealerImage}
-                        />
-                        <div>
-                          <p className={styles.dealerTitle}>
-                            {data.name}
-                          </p>
-                          <a
-                            href={data.googleMapUrl}
-                            target='_blank'
-                            className={styles.dealerMapUrl}
-                          >
-                            Google Map
-                          </a>
-                        </div>
-                      </div>
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      {data.city}
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      {data.address}
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      <a href={`tel:${data.phone}`}>
-                        {data.phone}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
-            </table>
-          </div>
-          <div className={styles.mobileTableContainer}>
-            <div className={styles.mobileTable}>
-              <div className={styles.tableHead}>
-                <div className={styles.tableHeadItem}>
-                  Dealer Name
-                </div>
-              </div>
-              <div className={styles.tableBody}>
-                {newTableData.slice((currentPage - 1) * 5, currentPage * 5).map((data, index) => (
-                  <div
-                    key={data.id || index}
-                    className={styles.mobileTableRow}
-                    style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
-                  >
-                    <img
-                      src={data.file}
-                      alt={data.name}
-                      className={styles.dealerImage}
-                    />
-                    <div className={styles.dealerData}>
-                      <div style={{ marginBottom: '8px' }}>
-                        <h5 className={styles.dealerTitle}>
-                          {data.name}
-                        </h5>
-                        <a
-                          href={data.googleMapUrl}
-                          target='_blank'
-                          className={styles.dealerMapUrl}
-                        >
-                          Google Map
-                        </a>
-                      </div>
-                      <div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            City/Town {' '}
-                          </span>
-                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+      <>
+        {loading ? (
+          <p>
+            Loading...
+          </p>
+        ) : (
+          <>
+            {newTableData?.length > 0 ? (
+              <>
+                <div className={styles.tableContainer}>
+                  <div className={styles.tableHeadTop}>
+                    <p>Search Result</p>
+                    <span>
+                      {loading ? 'loading...' : `Showing ${newTableData.length} results`}
+                    </span>
+                  </div>
+                  <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
+                    <thead className={styles.tableHead}>
+                      <tr>
+                        {tableHeadCols.map((data, index) => (
+                          <th key={index} className={styles.tableHeadItem}>
+                            {data}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className={styles.tableBody}>
+                      {!loading && newTableData.map((data, index) => (
+                        <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
+                            <div className={styles.tableBodyDealer}>
+                              <img
+                                src={data.file}
+                                alt={data.name}
+                                className={styles.dealerImage}
+                              />
+                              <div>
+                                <p className={styles.dealerTitle}>
+                                  {data.name}
+                                </p>
+                                <a
+                                  href={data.googleMapUrl}
+                                  target='_blank'
+                                  className={styles.dealerMapUrl}
+                                >
+                                  Google Map
+                                </a>
+                              </div>
+                            </div>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
                             {data.city}
-                          </span>
-                        </div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            Address {' '}
-                          </span>
-                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
                             {data.address}
-                          </span>
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            Phone {' '}
-                          </span>
-                          <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
-                            <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
+                            <a href={`tel:${data.phone}`}>
                               {data.phone}
                             </a>
-                          </span>
-                        </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
+                  </table>
+                </div>
+                <div className={styles.mobileTableContainer}>
+                  <div className={styles.mobileTable}>
+                    <div className={styles.tableHead}>
+                      <div className={styles.tableHeadItem}>
+                        Dealer Name
                       </div>
                     </div>
+                    <div className={styles.tableBody}>
+                      {newTableData.map((data, index) => (
+                        <div
+                          key={data.id || index}
+                          className={styles.mobileTableRow}
+                          style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
+                        >
+                          <img
+                            src={data.file}
+                            alt={data.name}
+                            className={styles.dealerImage}
+                          />
+                          <div className={styles.dealerData}>
+                            <div style={{ marginBottom: '8px' }}>
+                              <h5 className={styles.dealerTitle}>
+                                {data.name}
+                              </h5>
+                              <a
+                                href={data.googleMapUrl}
+                                target='_blank'
+                                className={styles.dealerMapUrl}
+                              >
+                                Google Map
+                              </a>
+                            </div>
+                            <div>
+                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  City/Town {' '}
+                                </span>
+                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                  {data.city}
+                                </span>
+                              </div>
+                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  Address {' '}
+                                </span>
+                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                  {data.address}
+                                </span>
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  Phone {' '}
+                                </span>
+                                <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
+                                  <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                                    {data.phone}
+                                  </a>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
                   </div>
-                ))}
-              </div>
-              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
-            </div>
-          </div>
-        </>
-      )}
-      {newTableData?.length === 0 && (
-        <div className={styles.noData}>
-          No data found
-        </div>
-      )}
+                </div>
+              </>
+            ) : (
+              <p>
+                {errorMessage}
+              </p>
+            )}
+          </>
+        )}
+      </>
     </div >
   )
 }

@@ -180,7 +180,6 @@
 }
 
 .paginationContainer {
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -202,6 +201,14 @@
 
 .paginationBtn>span {
   display: inline-block;
+}
+
+.paginationPageNum {
+  display: inline-block;
+  color: #151901;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .arrow {
@@ -256,6 +263,10 @@
   .dealerImage {
     width: 72px !important;
     height: 72px !important;
+  }
+
+  .paginationContainer {
+    margin: 24px 0;
   }
 
   .paginationBtn>span {
