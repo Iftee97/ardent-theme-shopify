@@ -20,6 +20,24 @@
   align-items: end;
 }
 
+.errorMessage {
+  color: #EA0029;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 20px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.loadingMessage {
+  color: #151901;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 20px;
+  margin-top: 6px;
+  text-align: center;
+}
+
 .label {
   color: #fff;
 }
@@ -81,6 +99,8 @@
 
 .tableContainer {
   display: block;
+  background-color: #fff;
+  border: 1px solid #E4E7EC;
 }
 
 .tableHeadTop {
@@ -106,13 +126,14 @@
   background-color: #FCECE9;
   border-radius: 16px;
   padding: 2px 8px;
+  font-size: 16px;
 }
 
 .table {
-  background: #FFF;
-  border: 1px solid #E4E7EC;
+  border-bottom: none;
   border-radius: 4px;
   width: 100%;
+  margin-bottom: 24px;
 }
 
 .tableHeadItem {
@@ -122,6 +143,10 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 18px;
+}
+
+.paginationContainerOnLargeScreens {
+  display: block;
 }
 
 .tableBodyItem {
@@ -216,6 +241,27 @@
   height: 20px;
 }
 
+.dealerData {
+  margin-bottom: 4px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 6px;
+}
+
+.dealerDataKey {
+  color: #151901;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.dealerDataVal {
+  color: #666;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 16px;
@@ -266,10 +312,18 @@
   }
 
   .paginationContainer {
-    margin: 24px 0;
+    margin: 24px 12px;
   }
 
   .paginationBtn>span {
+    display: none;
+  }
+
+  .tableHeadTop>span {
+    font-size: 14px;
+  }
+
+  .paginationContainerOnLargeScreens {
     display: none;
   }
 }

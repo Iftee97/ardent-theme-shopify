@@ -109,6 +109,7 @@ export default function App() {
 
     try {
       setLoading(true)
+      setNewTableData([])
       const response = await fetch('http://localhost:4000/proxy_route/dealer-by-state-city-zipcode', {
         method: 'POST',
         headers: {
@@ -162,7 +163,7 @@ export default function App() {
           <span>Next</span>
           <ArrowRight />
         </button>
-      </div >
+      </div>
     )
   }
 
@@ -260,7 +261,7 @@ export default function App() {
       {/* table */}
       <>
         {loading ? (
-          <p>
+          <p className={styles.loadingMessage}>
             Loading...
           </p>
         ) : (
@@ -270,7 +271,7 @@ export default function App() {
                 <div className={styles.tableContainer}>
                   <div className={styles.tableHeadTop}>
                     <p>Search Result</p>
-                    <span>
+                    <span className={styles.formResult}>
                       {loading ? 'loading...' : `Showing ${newTableData.length} results`}
                     </span>
                   </div>
@@ -322,8 +323,10 @@ export default function App() {
                         </tr>
                       ))}
                     </tbody>
-                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
                   </table>
+                  <div className={styles.paginationContainerOnLargeScreens}>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
+                  </div>
                 </div>
                 <div className={styles.mobileTableContainer}>
                   <div className={styles.mobileTable}>
@@ -344,7 +347,7 @@ export default function App() {
                             alt={data.name}
                             className={styles.dealerImage}
                           />
-                          <div className={styles.dealerData}>
+                          <div className={styles.dealerDataContainer}>
                             <div style={{ marginBottom: '8px' }}>
                               <h5 className={styles.dealerTitle}>
                                 {data.name}
@@ -358,28 +361,28 @@ export default function App() {
                               </a>
                             </div>
                             <div>
-                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                              <div className={styles.dealerData}>
+                                <span className={styles.dealerDataKey}>
                                   City/Town {' '}
                                 </span>
-                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                <span className={styles.dealerDataVal}>
                                   {data.city}
                                 </span>
                               </div>
-                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                              <div className={styles.dealerData}>
+                                <span className={styles.dealerDataKey}>
                                   Address {' '}
                                 </span>
-                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                <span className={styles.dealerDataVal}>
                                   {data.address}
                                 </span>
                               </div>
-                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                              <div className={styles.dealerData}>
+                                <span className={styles.dealerDataKey}>
                                   Phone {' '}
                                 </span>
-                                <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
-                                  <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                                <span className={styles.dealerDataVal}>
+                                  <a href={`tel:${data.phone}`} style={{ color: '#DF421E', textDecoration: 'none' }}>
                                     {data.phone}
                                   </a>
                                 </span>
@@ -394,7 +397,7 @@ export default function App() {
                 </div>
               </>
             ) : (
-              <p>
+              <p className={styles.errorMessage}>
                 {errorMessage}
               </p>
             )}
