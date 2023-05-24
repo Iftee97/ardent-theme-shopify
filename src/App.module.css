@@ -145,6 +145,10 @@
   line-height: 18px;
 }
 
+.paginationContainerOnLargeScreens {
+  display: block;
+}
+
 .tableBodyItem {
   padding: 16px 24px;
   font-weight: 400;
@@ -317,5 +321,9 @@
 
   .tableHeadTop>span {
     font-size: 14px;
+  }
+
+  .paginationContainerOnLargeScreens {
+    display: none;
   }
 }

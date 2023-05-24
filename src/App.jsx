@@ -324,7 +324,9 @@ export default function App() {
                       ))}
                     </tbody>
                   </table>
-                  <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
+                  <div className={styles.paginationContainerOnLargeScreens}>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
+                  </div>
                 </div>
                 <div className={styles.mobileTableContainer}>
                   <div className={styles.mobileTable}>
