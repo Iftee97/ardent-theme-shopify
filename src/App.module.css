@@ -203,6 +203,14 @@
   display: inline-block;
 }
 
+.paginationPageNum {
+  display: inline-block;
+  color: #151901;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+}
+
 .arrow {
   width: 20px;
   height: 20px;

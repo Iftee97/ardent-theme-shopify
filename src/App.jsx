@@ -9,6 +9,7 @@ export default function App() {
   const [selectedPostalCode, setSelectedPostalCode] = useState('')
   const [postalCodes, setPostalCodes] = useState([])
   const [stateError, setStateError] = useState(false)
+  const [cityError, setCityError] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
@@ -79,7 +80,10 @@ export default function App() {
     if (selectedState) {
       setStateError(false)
     }
-  }, [selectedState])
+    if (selectedCity) {
+      setCityError(false)
+    }
+  }, [selectedState, selectedCity])
 
   function getPostalCodes(city, state) {
     const locations = zipcodes.lookupByName(city, state)
@@ -96,6 +100,10 @@ export default function App() {
 
     if (!selectedState) {
       setStateError(true)
+      return
+    }
+    if (!selectedCity) {
+      setCityError(true)
       return
     }
 
@@ -143,6 +151,9 @@ export default function App() {
           <ArrowLeft />
           <span>Previous</span>
         </button>
+        <span className={styles.paginationPageNum}>
+          {currentPage} of {totalPages}
+        </span>
         <button
           className={styles.paginationBtn}
           onClick={() => handleNextPage()}
@@ -167,7 +178,7 @@ export default function App() {
               </span>
             ) : (
               <span className={styles.label}>
-                Select State
+                Select State*
               </span>
             )}
             <select
@@ -187,9 +198,15 @@ export default function App() {
             </select>
           </label>
           <label>
-            <span className={styles.label}>
-              Select City (optional)
-            </span>
+            {cityError ? (
+              <span className={styles.error}>
+                Please select a city
+              </span>
+            ) : (
+              <span className={styles.label}>
+                Select City*
+              </span>
+            )}
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
@@ -207,9 +224,16 @@ export default function App() {
           </label>
           <label>
             <span className={styles.label}>
-              Select Postal Code (optional)
+              Postal Code (optional)
             </span>
-            <select
+            <input
+              type="text"
+              value={selectedPostalCode}
+              onChange={(e) => setSelectedPostalCode(e.target.value)}
+              className={styles.field}
+              placeholder='enter postal code'
+            />
+            {/* <select
               value={selectedPostalCode}
               onChange={(e) => setSelectedPostalCode(e.target.value)}
               className={styles.field}
@@ -222,7 +246,7 @@ export default function App() {
                   {postalCode}
                 </option>
               ))}
-            </select>
+            </select> */}
           </label>
           <button type='submit' className={styles.submitBtn}>
             <SearchIcon />
