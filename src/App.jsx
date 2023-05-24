@@ -163,7 +163,7 @@ export default function App() {
           <span>Next</span>
           <ArrowRight />
         </button>
-      </div >
+      </div>
     )
   }
 
@@ -323,8 +323,8 @@ export default function App() {
                         </tr>
                       ))}
                     </tbody>
-                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
                   </table>
+                  <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
                 </div>
                 <div className={styles.mobileTableContainer}>
                   <div className={styles.mobileTable}>

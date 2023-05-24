@@ -99,6 +99,8 @@
 
 .tableContainer {
   display: block;
+  background-color: #fff;
+  border: 1px solid #E4E7EC;
 }
 
 .tableHeadTop {
@@ -128,10 +130,10 @@
 }
 
 .table {
-  background: #FFF;
-  border: 1px solid #E4E7EC;
+  border-bottom: none;
   border-radius: 4px;
   width: 100%;
+  margin-bottom: 24px;
 }
 
 .tableHeadItem {
@@ -306,7 +308,7 @@
   }
 
   .paginationContainer {
-    margin: 24px 0;
+    margin: 24px 12px;
   }
 
   .paginationBtn>span {
