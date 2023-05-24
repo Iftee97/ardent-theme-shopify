@@ -13,6 +13,7 @@ export default function App() {
   const [totalPages, setTotalPages] = useState(1)
   const [newTableData, setNewTableData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const states = State.getStatesOfCountry('US')
   const cities = City.getCitiesOfState('US', selectedState)
@@ -29,14 +30,24 @@ export default function App() {
 
   async function getDealerData(pageNumber) {
     let number = pageNumber || 1
-    setLoading(true)
-    const response = await fetch(`http://localhost:4000/proxy_route/dealer?page=${number}`)
-    const data = await response.json()
-    console.log('fetched dealer data: >>>>>>>>>>', data)
-    setNewTableData(data.data)
-    setCurrentPage(data.currentPage)
-    setTotalPages(data.numberOfPages)
-    setLoading(false)
+    try {
+      setLoading(true)
+      const response = await fetch(`http://localhost:4000/proxy_route/dealer?page=${number}`)
+      const data = await response.json()
+      console.log('fetched dealer data: >>>>>>>>>>', data)
+      if (data.data?.length > 0) {
+        setNewTableData(data.data)
+        setCurrentPage(data.currentPage)
+        setTotalPages(data.numberOfPages)
+      } else {
+        setErrorMessage('No data found')
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log('error: >>>>>>>>>>', error)
+      setErrorMessage('Something went wrong')
+      setLoading(false)
+    }
   }
 
   function handlePreviousPage() {
@@ -105,13 +116,18 @@ export default function App() {
       if (response.ok) {
         const data = await response.json()
         console.log('data: >>>>>>>>>>', data)
-        setNewTableData(data.data)
-        setCurrentPage(data.currentPage)
-        setTotalPages(data.numberOfPages)
+        if (data.data?.length > 0) {
+          setNewTableData(data.data)
+          setCurrentPage(data.currentPage)
+          setTotalPages(data.numberOfPages)
+        } else {
+          setErrorMessage('No data found')
+        }
       }
       setLoading(false)
     } catch (error) {
       console.log('error: >>>>>>>>>>', error)
+      setErrorMessage('Something went wrong')
       setLoading(false)
     }
   }
@@ -125,18 +141,14 @@ export default function App() {
           disabled={currentPage === 1 ? true : false}
         >
           <ArrowLeft />
-          <span>
-            Previous
-          </span>
+          <span>Previous</span>
         </button>
         <button
           className={styles.paginationBtn}
           onClick={() => handleNextPage()}
           disabled={currentPage === totalPages ? true : false}
         >
-          <span>
-            Next
-          </span>
+          <span>Next</span>
           <ArrowRight />
         </button>
       </div >
@@ -222,145 +234,149 @@ export default function App() {
       </div>
 
       {/* table */}
-      {newTableData?.length > 0 && (
-        <>
-          <div className={styles.tableContainer}>
-            <div className={styles.tableHeadTop}>
-              <p>Search Result</p>
-              <span>
-                {loading ? 'loading...' : `Showing ${newTableData.length} results`}
-              </span>
-            </div>
-            <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
-              <thead className={styles.tableHead}>
-                <tr>
-                  {tableHeadCols.map((data, index) => (
-                    <th key={index} className={styles.tableHeadItem}>
-                      {data}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className={styles.tableBody}>
-                {!loading && newTableData.map((data, index) => (
-                  <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
-                      <div className={styles.tableBodyDealer}>
-                        <img
-                          src={data.file}
-                          alt={data.name}
-                          className={styles.dealerImage}
-                        />
-                        <div>
-                          <p className={styles.dealerTitle}>
-                            {data.name}
-                          </p>
-                          <a
-                            href={data.googleMapUrl}
-                            target='_blank'
-                            className={styles.dealerMapUrl}
-                          >
-                            Google Map
-                          </a>
-                        </div>
-                      </div>
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      {data.city}
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      {data.address}
-                    </td>
-                    <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
-                      <a href={`tel:${data.phone}`}>
-                        {data.phone}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-                {loading && (
-                  <p>
-                    Loading...
-                  </p>
-                )}
-              </tbody>
-              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
-            </table>
-          </div>
-          <div className={styles.mobileTableContainer}>
-            <div className={styles.mobileTable}>
-              <div className={styles.tableHead}>
-                <div className={styles.tableHeadItem}>
-                  Dealer Name
-                </div>
-              </div>
-              <div className={styles.tableBody}>
-                {newTableData.map((data, index) => (
-                  <div
-                    key={data.id || index}
-                    className={styles.mobileTableRow}
-                    style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
-                  >
-                    <img
-                      src={data.file}
-                      alt={data.name}
-                      className={styles.dealerImage}
-                    />
-                    <div className={styles.dealerData}>
-                      <div style={{ marginBottom: '8px' }}>
-                        <h5 className={styles.dealerTitle}>
-                          {data.name}
-                        </h5>
-                        <a
-                          href={data.googleMapUrl}
-                          target='_blank'
-                          className={styles.dealerMapUrl}
-                        >
-                          Google Map
-                        </a>
-                      </div>
-                      <div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            City/Town {' '}
-                          </span>
-                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+      <>
+        {loading ? (
+          <p>
+            Loading...
+          </p>
+        ) : (
+          <>
+            {newTableData?.length > 0 ? (
+              <>
+                <div className={styles.tableContainer}>
+                  <div className={styles.tableHeadTop}>
+                    <p>Search Result</p>
+                    <span>
+                      {loading ? 'loading...' : `Showing ${newTableData.length} results`}
+                    </span>
+                  </div>
+                  <table className={styles.table} style={{ borderCollapse: 'collapse' }}>
+                    <thead className={styles.tableHead}>
+                      <tr>
+                        {tableHeadCols.map((data, index) => (
+                          <th key={index} className={styles.tableHeadItem}>
+                            {data}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className={styles.tableBody}>
+                      {!loading && newTableData.map((data, index) => (
+                        <tr key={data.id || index} style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '610px' }}>
+                            <div className={styles.tableBodyDealer}>
+                              <img
+                                src={data.file}
+                                alt={data.name}
+                                className={styles.dealerImage}
+                              />
+                              <div>
+                                <p className={styles.dealerTitle}>
+                                  {data.name}
+                                </p>
+                                <a
+                                  href={data.googleMapUrl}
+                                  target='_blank'
+                                  className={styles.dealerMapUrl}
+                                >
+                                  Google Map
+                                </a>
+                              </div>
+                            </div>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
                             {data.city}
-                          </span>
-                        </div>
-                        <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            Address {' '}
-                          </span>
-                          <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
                             {data.address}
-                          </span>
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
-                          <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
-                            Phone {' '}
-                          </span>
-                          <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
-                            <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                          </td>
+                          <td className={styles.tableBodyItem} style={{ maxWidth: '200px' }}>
+                            <a href={`tel:${data.phone}`}>
                               {data.phone}
                             </a>
-                          </span>
-                        </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
+                  </table>
+                </div>
+                <div className={styles.mobileTableContainer}>
+                  <div className={styles.mobileTable}>
+                    <div className={styles.tableHead}>
+                      <div className={styles.tableHeadItem}>
+                        Dealer Name
                       </div>
                     </div>
+                    <div className={styles.tableBody}>
+                      {newTableData.map((data, index) => (
+                        <div
+                          key={data.id || index}
+                          className={styles.mobileTableRow}
+                          style={{ backgroundColor: index % 2 === 0 ? '#F9FAFB' : '#FFF' }}
+                        >
+                          <img
+                            src={data.file}
+                            alt={data.name}
+                            className={styles.dealerImage}
+                          />
+                          <div className={styles.dealerData}>
+                            <div style={{ marginBottom: '8px' }}>
+                              <h5 className={styles.dealerTitle}>
+                                {data.name}
+                              </h5>
+                              <a
+                                href={data.googleMapUrl}
+                                target='_blank'
+                                className={styles.dealerMapUrl}
+                              >
+                                Google Map
+                              </a>
+                            </div>
+                            <div>
+                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  City/Town {' '}
+                                </span>
+                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                  {data.city}
+                                </span>
+                              </div>
+                              <div style={{ marginBottom: '4px', display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  Address {' '}
+                                </span>
+                                <span style={{ color: '#666', fontWeight: 400, fontSize: '12px' }}>
+                                  {data.address}
+                                </span>
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '6px' }}>
+                                <span style={{ color: '#151901', fontWeight: 500, fontSize: '12px' }}>
+                                  Phone {' '}
+                                </span>
+                                <span style={{ color: '#DF421E', fontWeight: 400, fontSize: '12px' }}>
+                                  <a href={`tel:${data.phone}`} style={{ textDecoration: 'none' }}>
+                                    {data.phone}
+                                  </a>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
                   </div>
-                ))}
-              </div>
-              <Pagination totalPages={Math.ceil(newTableData.length / 5)} />
-            </div>
-          </div>
-        </>
-      )}
-      {newTableData?.length === 0 && (
-        <div className={styles.noData}>
-          No data found
-        </div>
-      )}
+                </div>
+              </>
+            ) : (
+              <p>
+                {errorMessage}
+              </p>
+            )}
+          </>
+        )}
+      </>
     </div >
   )
 }
