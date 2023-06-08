@@ -17,7 +17,15 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState('')
 
   const states = State.getStatesOfCountry('US')
-  const cities = City.getCitiesOfState('US', selectedState)
+  // const cities = City.getCitiesOfState('US', selectedState)
+  const [cities, setCities] = useState([])
+
+  useEffect(() => {
+    console.log('selectedState: >>>>>>>>>>>>', selectedState)
+    if (selectedState) {
+      setCities(City.getCitiesOfState('US', selectedState.split(', ')[1]))
+    }
+  }, [selectedState])
 
   const tableHeadCols = ['Dealer Name', 'City/Town', 'Address', 'Phone']
 
@@ -107,6 +115,11 @@ export default function App() {
       return
     }
 
+    console.log({
+      state: selectedState.split(', ')[0],
+      city: selectedCity,
+      zipcode: selectedPostalCode
+    })
     try {
       setLoading(true)
       setNewTableData([])
@@ -116,7 +129,7 @@ export default function App() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          state: selectedState,
+          state: selectedState.split(', ')[0],
           city: selectedCity,
           zipcode: selectedPostalCode
         })
@@ -192,7 +205,7 @@ export default function App() {
                 Select State
               </option>
               {states.map((state) => (
-                <option key={state.isoCode} value={state.isoCode}>
+                <option key={state.isoCode} value={`${state.name}, ${state.isoCode}`}>
                   {`${state.name}, ${state.isoCode}`}
                 </option>
               ))}
@@ -216,8 +229,8 @@ export default function App() {
               <option value=''>
                 Select City
               </option>
-              {cities.map((city) => (
-                <option key={city.name} value={city.name}>
+              {cities && cities?.map((city) => (
+                <option key={city.name} value={city.isoCode}>
                   {city.name}
                 </option>
               ))}
