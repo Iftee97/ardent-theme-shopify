@@ -17,7 +17,6 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState('')
 
   const states = State.getStatesOfCountry('US')
-  // const cities = City.getCitiesOfState('US', selectedState)
   const [cities, setCities] = useState([])
 
   useEffect(() => {
